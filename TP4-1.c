@@ -17,7 +17,8 @@ typedef struct Tarea {
 void IngresarTarea(Tarea** Tareas, int Indice);
 void MostrarTareas(Tarea** Tareas, int CantidadTareas);
 void RealizarTareas(Tarea** Tareas, Tarea** TareasHechas, int CantidadTareas);
-Tarea* BuscarTarea(Tarea** Tareas, int CantidadTareas, char* PalabraClave);
+Tarea* BusquedaPorPalabra(Tarea** Tareas, int CantidadTareas, char* PalabraClave);
+Tarea* BusquedaPorId(Tarea** Tareas, int CantidadTareas, int ID);
 void MostrarTarea(Tarea* Tarea);
 
 int main()
@@ -49,7 +50,8 @@ int main()
     MostrarTareas(TareasHechas, CantidadTareas);
 
     printf("\n--------- Tareas Buscada ---------\n");
-    MostrarTarea(BuscarTarea(Tareas, CantidadTareas, "perrito"));
+    MostrarTarea(BusquedaPorPalabra(Tareas, CantidadTareas, "perrito"));
+    MostrarTarea(BusquedaPorId(Tareas, CantidadTareas, 1));
 
     return 0;
 }
@@ -109,10 +111,21 @@ void RealizarTareas(Tarea** Tareas, Tarea** TareasHechas, int CantidadTareas){
     }
 }
 
-Tarea* BuscarTarea(Tarea** Tareas, int CantidadTareas, char* PalabraClave){
+Tarea* BusquedaPorPalabra(Tarea** Tareas, int CantidadTareas, char* PalabraClave){
 
     for(unsigned int i = 0; i < CantidadTareas; i++){
         if(strstr((*(Tareas + i))->Descripcion, PalabraClave) != NULL){
+            return (*(Tareas + i));
+        }
+    }
+
+    return NULL;
+}
+
+Tarea* BusquedaPorId(Tarea** Tareas, int CantidadTareas, int ID){
+
+    for(unsigned int i = 0; i < CantidadTareas; i++){
+        if((*(Tareas + i))->TareaID == ID){
             return (*(Tareas + i));
         }
     }
