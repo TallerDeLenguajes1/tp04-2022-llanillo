@@ -1,6 +1,7 @@
 /*
  *  PUNTEROS DOBLES ARITMETICA
  *  arr[i][j] == *(arr[i] + j) == *(*(arr + i) + j)
+ *  arr[i] == (*(arr + i))
  */
 
 #include <stdio.h>
@@ -53,6 +54,20 @@ int main()
     MostrarTarea(BusquedaPorPalabra(Tareas, CantidadTareas, "perrito"));
     MostrarTarea(BusquedaPorId(Tareas, CantidadTareas, 1));
 
+    for(unsigned int i = 0; i < CantidadTareas; i++){
+//        free((*(Tareas + i))->Descripcion);
+        free((*(Tareas + i)));
+        (*(Tareas + i))->Descripcion = NULL;
+        (*(Tareas + i)) = NULL;
+//        free((*(TareasHechas + i))->Descripcion);
+        free((*(TareasHechas + i)));
+        (*(TareasHechas + i))->Descripcion = NULL;
+        (*(TareasHechas + i)) = NULL;
+    }
+
+    free(Tareas);
+    free(TareasHechas);
+
     return 0;
 }
 
@@ -72,7 +87,7 @@ void IngresarTarea(Tarea** Tareas, int Indice){
 void MostrarTareas(Tarea** Tareas, int CantidadTareas){
 
     for(unsigned int i = 0; i < CantidadTareas; i++){
-        if(Tareas[i] != NULL){
+        if(Tareas[i]){
             printf("ID: %d\n", (*(Tareas + i))->TareaID);
             printf("Duracion: %d\n", (*(Tareas + i))->Duracion);
             printf("Descripción: %s\n", (*(Tareas + i))->Descripcion);
@@ -82,7 +97,7 @@ void MostrarTareas(Tarea** Tareas, int CantidadTareas){
 
 void MostrarTarea(Tarea* Tarea){
 
-    if(Tarea != NULL){
+    if(Tarea){
         printf("ID: %d\n", Tarea->TareaID);
         printf("Duracion: %d\n", Tarea->Duracion);
         printf("Descripción: %s\n", Tarea->Descripcion);
@@ -114,8 +129,8 @@ void RealizarTareas(Tarea** Tareas, Tarea** TareasHechas, int CantidadTareas){
 Tarea* BusquedaPorPalabra(Tarea** Tareas, int CantidadTareas, char* PalabraClave){
 
     for(unsigned int i = 0; i < CantidadTareas; i++){
-        if(strstr((*(Tareas + i))->Descripcion, PalabraClave) != NULL){
-            return (*(Tareas + i));
+        if((*(Tareas + i)) && strstr((*(Tareas + i))->Descripcion, PalabraClave)){
+                return (*(Tareas + i));
         }
     }
 
@@ -125,8 +140,8 @@ Tarea* BusquedaPorPalabra(Tarea** Tareas, int CantidadTareas, char* PalabraClave
 Tarea* BusquedaPorId(Tarea** Tareas, int CantidadTareas, int ID){
 
     for(unsigned int i = 0; i < CantidadTareas; i++){
-        if((*(Tareas + i))->TareaID == ID){
-            return (*(Tareas + i));
+        if((*(Tareas + i)) && (*(Tareas + i))->TareaID == ID){
+                return (*(Tareas + i));
         }
     }
 
