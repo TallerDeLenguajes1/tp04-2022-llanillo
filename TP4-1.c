@@ -21,11 +21,11 @@ struct Nodo{
 typedef struct Nodo* Lista;
 
 void IngresarTareas(Lista Tareas, int CantidadTareas);
-void MostrarTareas(Tarea* Tareas, int CantidadTareas);
-void RealizarTareas(Tarea* Tareas, Tarea** TareasHechas, int CantidadTareas);
-Tarea* BusquedaPorPalabra(Tarea* Tareas, int CantidadTareas, char* PalabraClave);
-Tarea* BusquedaPorId(Tarea* Tareas, int CantidadTareas, int ID);
-void MostrarTarea(Tarea* Tarea);
+void RealizarTareas(Lista Tareas, Lista TareasHechas);
+Lista BusquedaPorPalabra(Lista Tareas, char* PalabraClave);
+Lista BusquedaPorId(Lista Tareas, int ID);
+void MostrarTareas(Lista Tareas);
+void MostrarTarea(Lista Tarea);
 int EsListaVacia(Lista* Tarea);
 
 int main()
@@ -46,17 +46,17 @@ int main()
 //    }
     IngresarTareas(Tareas, CantidadTareas);
 
-    RealizarTareas(Tareas, TareasHechas, CantidadTareas);
+    RealizarTareas(Tareas, TareasHechas);
 
     printf("--------- Tareas Pendientes ---------\n");
-    MostrarTareas(Tareas, CantidadTareas);
+    MostrarTareas(Tareas);
 
     printf("\n--------- Tareas Hechas ---------\n");
-    MostrarTareas(TareasHechas, CantidadTareas);
+    MostrarTareas(TareasHechas);
 
     printf("\n--------- Tareas Buscada ---------\n");
-    MostrarTarea(BusquedaPorPalabra(Tareas, CantidadTareas, "perrito"));
-    MostrarTarea(BusquedaPorId(Tareas, CantidadTareas, 1));
+    MostrarTarea(BusquedaPorPalabra(Tareas, "perrito"));
+    MostrarTarea(BusquedaPorId(Tareas, 1));
 
     return 0;
 }
@@ -82,65 +82,70 @@ void IngresarTareas(Lista Tareas, int CantidadTareas){
     }
 }
 
-void MostrarTareas(Tarea* Tareas, int CantidadTareas){
+void MostrarTareas(Lista Tareas){
 
-    for(unsigned int i = 0; i < CantidadTareas; i++){
-        if(Tareas[i] != NULL){
-            printf("ID: %d\n", (*(Tareas + i))->TareaID);
-            printf("Duracion: %d\n", (*(Tareas + i))->Duracion);
-            printf("Descripción: %s\n", (*(Tareas + i))->Descripcion);
-        }
+    while(!EsListaVacia(Tareas)){
+        printf("ID: %d\n", Tareas->T.TareaID);
+        printf("Duracion: %d\n", Tareas->T.Duracion);
+        printf("Descripción: %s\n", Tareas->T.Descripcion);
     }
 }
 
-void MostrarTarea(Tarea* Tarea){
+void MostrarTarea(Lista Tarea){
 
-    if(Tarea != NULL){
-        printf("ID: %d\n", Tarea->TareaID);
-        printf("Duracion: %d\n", Tarea->Duracion);
-        printf("Descripción: %s\n", Tarea->Descripcion);
+    if(!EsListaVacia(Tarea)){
+        printf("ID: %d\n", Tarea->T.TareaID);
+        printf("Duracion: %d\n", Tarea->T.Duracion);
+        printf("Descripción: %s\n", Tarea->T.Descripcion);
     }
     else{
         printf("Tarea vacia\n");
     }
 }
 
-void RealizarTareas(Lista Tareas, Lista TareasHechas, int CantidadTareas){
+void RealizarTareas(Lista Tareas, Lista TareasHechas){
 
     int temporal;
 
-    for(unsigned int i = 0; i < CantidadTareas; i++){
-        printf("--- Tarea %d ---\n", i);
+    while(!EsListaVacia(Tareas))
+        printf("--- Tarea %d ---\n", Tareas->T.TareaID);
         printf("¿Esta hecha la tarea? (1 - Si, 0 - No)\n");
         scanf(" %i", &temporal);
 
         if(temporal){
-            TareasHechas->T = Tareas->T;
-            Tareas->T = NULL;
+            TareasHechas = Tareas;
+            TareasHechas->Siguiente = NULL;
+            Tareas = Tareas->Siguiente;
+            free(Tareas);
+            Tareas = NULL;
         }
         else{
-            TareasHechas->T = NULL;
+
         }
+
+        Tareas = Tareas->Siguiente;
     }
 }
 
-Tarea* BusquedaPorPalabra(Tarea* Tareas, int CantidadTareas, char* PalabraClave){
+Lista BusquedaPorPalabra(Lista Tareas , char* PalabraClave){
 
-    for(unsigned int i = 0; i < CantidadTareas; i++){
-        if(strstr((*(Tareas + i))->Descripcion, PalabraClave) != NULL){
-            return (*(Tareas + i));
+    while(!EsListaVacia(Tareas)){
+        if(strstr(Tareas->T.Descripcion, PalabraClave) != NULL){
+            return Tareas;
         }
+        Tareas++;
     }
 
     return NULL;
 }
 
-Tarea* BusquedaPorId(Tarea* Tareas, int CantidadTareas, int ID){
+Lista BusquedaPorId(Lista Tareas, int ID){
 
-    for(unsigned int i = 0; i < CantidadTareas; i++){
-        if((*(Tareas + i))->TareaID == ID){
-            return (*(Tareas + i));
+    while(!EsListaVacia(Tareas)){
+        if(Tareas->T.TareaID == ID){
+            return Tareas;
         }
+        Tareas++;
     }
 
     return NULL;
