@@ -14,18 +14,25 @@ typedef struct Tarea {
     int Duracion; // entre 10 – 100
 } Tarea;
 
-void IngresarTarea(Tarea** Tareas, int Indice);
-void MostrarTareas(Tarea** Tareas, int CantidadTareas);
-void RealizarTareas(Tarea** Tareas, Tarea** TareasHechas, int CantidadTareas);
-Tarea* BusquedaPorPalabra(Tarea** Tareas, int CantidadTareas, char* PalabraClave);
-Tarea* BusquedaPorId(Tarea** Tareas, int CantidadTareas, int ID);
+struct Nodo{
+    Tarea T;
+    struct Nodo* Siguiente;
+};
+typedef struct Nodo* Lista;
+
+void IngresarTareas(Lista Tareas, int CantidadTareas);
+void MostrarTareas(Tarea* Tareas, int CantidadTareas);
+void RealizarTareas(Tarea* Tareas, Tarea** TareasHechas, int CantidadTareas);
+Tarea* BusquedaPorPalabra(Tarea* Tareas, int CantidadTareas, char* PalabraClave);
+Tarea* BusquedaPorId(Tarea* Tareas, int CantidadTareas, int ID);
 void MostrarTarea(Tarea* Tarea);
+int EsListaVacia(Lista* Tarea);
 
 int main()
 {
     int CantidadTareas;
-    Tarea** Tareas;
-    Tarea** TareasHechas;
+    Lista Tareas = NULL;
+    Lista TareasHechas = NULL;
 
     srand(time(NULL));
 
@@ -33,13 +40,11 @@ int main()
     scanf("%d", &CantidadTareas);
     getchar();
 
-    Tareas = (Tarea**) malloc(CantidadTareas * sizeof(Tarea*));
-    TareasHechas = (Tarea**) malloc(CantidadTareas * sizeof(Tarea));
-
-    for(unsigned int i = 0; i < CantidadTareas; i++){
-        Tareas[i] = (Tarea*) malloc(sizeof(Tarea));
-        IngresarTarea(Tareas, i);
-    }
+//    for(unsigned int i = 0; i < CantidadTareas; i++){
+//        Tareas->Siguiente = (Tarea*) malloc(sizeof(Tarea));
+//        IngresarTarea(Tareas, i);
+//    }
+    IngresarTareas(Tareas, CantidadTareas);
 
     RealizarTareas(Tareas, TareasHechas, CantidadTareas);
 
@@ -56,20 +61,28 @@ int main()
     return 0;
 }
 
-void IngresarTarea(Tarea** Tareas, int Indice){
-    char *Buffer = (char *) malloc(100 * sizeof(char));
+void IngresarTareas(Lista Tareas, int CantidadTareas){
 
-    (*(Tareas + Indice))->Duracion = rand() % 101 + 10;
-    (*(Tareas + Indice))->TareaID = Indice;
+    for (unsigned int i = 0; i < CantidadTareas; i++){
+        printf("Ingrese Tarea %d\n", i);
 
-    printf("Ingrese la decripción\n");
-    fgets(Buffer, 100, stdin);
+        char *Buffer = (char *) malloc(100 * sizeof(char));
 
-    (*(Tareas + Indice))->Descripcion = (char*) malloc((strlen(Buffer) + 1) * sizeof(char));
-    strcpy((*(Tareas + Indice))->Descripcion, Buffer);
+        Tareas->T.Duracion = rand() % 101 + 10;
+        Tareas->T.TareaID = i;
+
+        printf("Ingrese la decripción\n");
+        fgets(Buffer, 100, stdin);
+
+        Tareas->T.Descripcion = (char*) malloc((strlen(Buffer) + 1) * sizeof(char));
+        strcpy(Tareas->T.Descripcion, Buffer);
+
+        Tareas->Siguiente = (Lista) malloc(sizeof(struct Nodo));
+        Tareas = Tareas->Siguiente;
+    }
 }
 
-void MostrarTareas(Tarea** Tareas, int CantidadTareas){
+void MostrarTareas(Tarea* Tareas, int CantidadTareas){
 
     for(unsigned int i = 0; i < CantidadTareas; i++){
         if(Tareas[i] != NULL){
@@ -92,7 +105,7 @@ void MostrarTarea(Tarea* Tarea){
     }
 }
 
-void RealizarTareas(Tarea** Tareas, Tarea** TareasHechas, int CantidadTareas){
+void RealizarTareas(Lista Tareas, Lista TareasHechas, int CantidadTareas){
 
     int temporal;
 
@@ -102,16 +115,16 @@ void RealizarTareas(Tarea** Tareas, Tarea** TareasHechas, int CantidadTareas){
         scanf(" %i", &temporal);
 
         if(temporal){
-            (*(TareasHechas + i)) = (*(Tareas + i));
-            (*(Tareas + i)) = NULL;
+            TareasHechas->T = Tareas->T;
+            Tareas->T = NULL;
         }
         else{
-            (*(TareasHechas + i)) = NULL;
+            TareasHechas->T = NULL;
         }
     }
 }
 
-Tarea* BusquedaPorPalabra(Tarea** Tareas, int CantidadTareas, char* PalabraClave){
+Tarea* BusquedaPorPalabra(Tarea* Tareas, int CantidadTareas, char* PalabraClave){
 
     for(unsigned int i = 0; i < CantidadTareas; i++){
         if(strstr((*(Tareas + i))->Descripcion, PalabraClave) != NULL){
@@ -122,7 +135,7 @@ Tarea* BusquedaPorPalabra(Tarea** Tareas, int CantidadTareas, char* PalabraClave
     return NULL;
 }
 
-Tarea* BusquedaPorId(Tarea** Tareas, int CantidadTareas, int ID){
+Tarea* BusquedaPorId(Tarea* Tareas, int CantidadTareas, int ID){
 
     for(unsigned int i = 0; i < CantidadTareas; i++){
         if((*(Tareas + i))->TareaID == ID){
@@ -131,4 +144,8 @@ Tarea* BusquedaPorId(Tarea** Tareas, int CantidadTareas, int ID){
     }
 
     return NULL;
+}
+
+int EsListaVacia(Lista* Tarea){
+    return Tarea == NULL;
 }
