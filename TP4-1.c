@@ -17,6 +17,8 @@ typedef struct Tarea {
 void IngresarTarea(Tarea** Tareas, int Indice);
 void MostrarTareas(Tarea** Tareas, int CantidadTareas);
 void RealizarTareas(Tarea** Tareas, Tarea** TareasHechas, int CantidadTareas);
+Tarea* BuscarTarea(Tarea** Tareas, int CantidadTareas, char* PalabraClave);
+void MostrarTarea(Tarea* Tarea);
 
 int main()
 {
@@ -43,8 +45,11 @@ int main()
     printf("--------- Tareas Pendientes ---------\n");
     MostrarTareas(Tareas, CantidadTareas);
 
-    printf("--------- Tareas Hechas ---------\n");
+    printf("\n--------- Tareas Hechas ---------\n");
     MostrarTareas(TareasHechas, CantidadTareas);
+
+    printf("\n--------- Tareas Buscada ---------\n");
+    MostrarTarea(BuscarTarea(Tareas, CantidadTareas, "perrito"));
 
     return 0;
 }
@@ -73,6 +78,18 @@ void MostrarTareas(Tarea** Tareas, int CantidadTareas){
     }
 }
 
+void MostrarTarea(Tarea* Tarea){
+
+    if(Tarea != NULL){
+        printf("ID: %d\n", Tarea->TareaID);
+        printf("Duracion: %d\n", Tarea->Duracion);
+        printf("Descripción: %s\n", Tarea->Descripcion);
+    }
+    else{
+        printf("Tarea vacia\n");
+    }
+}
+
 void RealizarTareas(Tarea** Tareas, Tarea** TareasHechas, int CantidadTareas){
 
     int temporal;
@@ -82,7 +99,7 @@ void RealizarTareas(Tarea** Tareas, Tarea** TareasHechas, int CantidadTareas){
         printf("¿Esta hecha la tarea? (1 - Si, 0 - No)\n");
         scanf(" %i", &temporal);
 
-        if(temporal != 0){
+        if(temporal){
             (*(TareasHechas + i)) = (*(Tareas + i));
             (*(Tareas + i)) = NULL;
         }
@@ -90,4 +107,15 @@ void RealizarTareas(Tarea** Tareas, Tarea** TareasHechas, int CantidadTareas){
             (*(TareasHechas + i)) = NULL;
         }
     }
+}
+
+Tarea* BuscarTarea(Tarea** Tareas, int CantidadTareas, char* PalabraClave){
+
+    for(unsigned int i = 0; i < CantidadTareas; i++){
+        if(strstr((*(Tareas + i))->Descripcion, PalabraClave) != NULL){
+            return (*(Tareas + i));
+        }
+    }
+
+    return NULL;
 }
