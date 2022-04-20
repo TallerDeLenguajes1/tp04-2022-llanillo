@@ -20,19 +20,21 @@ struct Nodo{
 };
 typedef struct Nodo* Lista;
 
-void IngresarTareas(Lista Tareas, int CantidadTareas);
+void IngresarTarea(Lista Tareas, int Indice);
+void InsertarTarea(Lista* Principal, Lista Tarea);
 void RealizarTareas(Lista Tareas, Lista TareasHechas);
 Lista BusquedaPorPalabra(Lista Tareas, char* PalabraClave);
 Lista BusquedaPorId(Lista Tareas, int ID);
 void MostrarTareas(Lista Tareas);
 void MostrarTarea(Lista Tarea);
-int EsListaVacia(Lista* Tarea);
+int EsListaVacia(Lista Tarea);
 
 int main()
 {
     int CantidadTareas;
     Lista Tareas = NULL;
     Lista TareasHechas = NULL;
+    Lista Auxiliar = NULL;
 
     srand(time(NULL));
 
@@ -40,46 +42,42 @@ int main()
     scanf("%d", &CantidadTareas);
     getchar();
 
-//    for(unsigned int i = 0; i < CantidadTareas; i++){
-//        Tareas->Siguiente = (Tarea*) malloc(sizeof(Tarea));
-//        IngresarTarea(Tareas, i);
-//    }
-    IngresarTareas(Tareas, CantidadTareas);
+    for(unsigned int i = 0; i < CantidadTareas; i++){
+        Auxiliar = (Lista) malloc(sizeof(struct Nodo));
+        IngresarTarea(Auxiliar, i);
+        InsertarTarea(&Tareas, Auxiliar);
+    }
 
-    RealizarTareas(Tareas, TareasHechas);
+    //    RealizarTareas(Tareas, TareasHechas);
 
     printf("--------- Tareas Pendientes ---------\n");
     MostrarTareas(Tareas);
 
     printf("\n--------- Tareas Hechas ---------\n");
-    MostrarTareas(TareasHechas);
+    //    MostrarTareas(TareasHechas);
 
     printf("\n--------- Tareas Buscada ---------\n");
-    MostrarTarea(BusquedaPorPalabra(Tareas, "perrito"));
-    MostrarTarea(BusquedaPorId(Tareas, 1));
+    //    MostrarTarea(BusquedaPorPalabra(Tareas, "perrito"));
+    //    MostrarTarea(BusquedaPorId(Tareas, 1));
 
     return 0;
 }
 
-void IngresarTareas(Lista Tareas, int CantidadTareas){
+void IngresarTarea(Lista Tareas, int Indice){
 
-    for (unsigned int i = 0; i < CantidadTareas; i++){
-        printf("Ingrese Tarea %d\n", i);
+    printf("Ingrese Tarea %d\n", Indice);
+    char *Buffer = (char *) malloc(100 * sizeof(char));
 
-        char *Buffer = (char *) malloc(100 * sizeof(char));
+    Tareas->T.Duracion = rand() % 101 + 10;
+    Tareas->T.TareaID = Indice;
 
-        Tareas->T.Duracion = rand() % 101 + 10;
-        Tareas->T.TareaID = i;
+    printf("Ingrese la decripción\n");
+    fgets(Buffer, 100, stdin);
 
-        printf("Ingrese la decripción\n");
-        fgets(Buffer, 100, stdin);
+    Tareas->T.Descripcion = (char*) malloc((strlen(Buffer) + 1) * sizeof(char));
+    strcpy(Tareas->T.Descripcion, Buffer);
 
-        Tareas->T.Descripcion = (char*) malloc((strlen(Buffer) + 1) * sizeof(char));
-        strcpy(Tareas->T.Descripcion, Buffer);
-
-        Tareas->Siguiente = (Lista) malloc(sizeof(struct Nodo));
-        Tareas = Tareas->Siguiente;
-    }
+    Tareas->Siguiente = NULL;
 }
 
 void MostrarTareas(Lista Tareas){
@@ -88,6 +86,7 @@ void MostrarTareas(Lista Tareas){
         printf("ID: %d\n", Tareas->T.TareaID);
         printf("Duracion: %d\n", Tareas->T.Duracion);
         printf("Descripción: %s\n", Tareas->T.Descripcion);
+        Tareas = Tareas->Siguiente;
     }
 }
 
@@ -103,18 +102,21 @@ void MostrarTarea(Lista Tarea){
     }
 }
 
-void RealizarTareas(Lista Tareas, Lista TareasHechas){
+void RealizarTareas(Lista* Tareas, Lista* TareasHechas){
 
+    Lista Auxiliar = NULL;
     int temporal;
 
-    while(!EsListaVacia(Tareas))
-        printf("--- Tarea %d ---\n", Tareas->T.TareaID);
+    while(!EsListaVacia(Tareas)){
+        printf("--- Tarea %d ---\n", (*Tareas)->T.TareaID);
         printf("¿Esta hecha la tarea? (1 - Si, 0 - No)\n");
         scanf(" %i", &temporal);
 
         if(temporal){
-            TareasHechas = Tareas;
-            TareasHechas->Siguiente = NULL;
+            Auxiliar = *Tareas;
+            Auxiliar->Siguiente = NULL;
+            (*TareasHechas) = Auxiliar;
+            (*TareasHechas)->Siguiente = NULL;
             Tareas = Tareas->Siguiente;
             free(Tareas);
             Tareas = NULL;
@@ -151,6 +153,13 @@ Lista BusquedaPorId(Lista Tareas, int ID){
     return NULL;
 }
 
-int EsListaVacia(Lista* Tarea){
+int EsListaVacia(Lista Tarea){
     return Tarea == NULL;
 }
+
+void InsertarTarea(Lista* Principal, Lista Tarea){
+    Tarea->Siguiente = *Principal;
+    *Principal = Tarea;
+}
+
+Lista BorrarTarea()
