@@ -129,29 +129,29 @@ void RealizarTareas(Lista* Tareas, Lista* TareasHechas){
     }
 }
 
-Lista BusquedaPorPalabra(Lista Tareas , char* PalabraClave){
+// Lista BusquedaPorPalabra(Lista Tareas , char* PalabraClave){
 
-    while(!EsListaVacia(Tareas)){
-        if(strstr(Tareas->T.Descripcion, PalabraClave) != NULL){
-            return Tareas;
-        }
-        Tareas++;
-    }
+//     while(!EsListaVacia(Tareas)){
+//         if(strstr(Tareas->T.Descripcion, PalabraClave) != NULL){
+//             return Tareas;
+//         }
+//         Tareas++;
+//     }
 
-    return NULL;
-}
+//     return NULL;
+// }
 
-Lista BusquedaPorId(Lista Tareas, int ID){
+// Lista BusquedaPorId(Lista Tareas, int ID){
 
-    while(!EsListaVacia(Tareas)){
-        if(Tareas->T.TareaID == ID){
-            return Tareas;
-        }
-        Tareas++;
-    }
+//     while(!EsListaVacia(Tareas)){
+//         if(Tareas->T.TareaID == ID){
+//             return Tareas;
+//         }
+//         Tareas++;
+//     }
 
-    return NULL;
-}
+//     return NULL;
+// }
 
 int EsListaVacia(Lista Tarea){
     return Tarea == NULL;
