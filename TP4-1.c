@@ -144,6 +144,8 @@ Tarea CrearTarea(int Indice){
     Temporal.Descripcion = (char*) malloc((strlen(Buffer) + 1) * sizeof(char));
     strcpy(Temporal.Descripcion, Buffer);
 
+    free(Buffer);
+    
     return Temporal;
 }
 
