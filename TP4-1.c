@@ -27,6 +27,7 @@ Lista CrearLista();
 Lista NuevoNodo(Tarea Objeto);
 void InsertarNodo(Lista* Cabecera, Tarea Objeto);
 Lista Eliminar(Lista Nodo);
+void LiberarMemoria(Lista* Cabecera);
 
 /*
  * Declaraciones para operar con las tareas
@@ -64,8 +65,11 @@ int main()
     MostrarTareas(TareasHechas);
 
     printf("\n--------- Tareas Buscada ---------\n");
-//    MostrarTarea(BuscarPorPalabra(&Tareas, "perrito"));
-//    MostrarTarea(BuscarPorID(&Tareas, 0));
+    MostrarTarea(BuscarPorPalabra(&Tareas, "test"));
+    MostrarTarea(BuscarPorID(&Tareas, 0));
+
+    LiberarMemoria(&Tareas);
+    LiberarMemoria(&TareasHechas);
 
     return 0;
 }
@@ -109,8 +113,15 @@ Lista Eliminar(Lista Nodo){
     Lista Temporal = Nodo;
     Nodo = Nodo->Siguiente;
     free(Temporal);
-    Temporal = NULL;
     return Nodo;
+}
+
+void LiberarMemoria(Lista* Cabecera){
+    Lista Auxiliar = *Cabecera;
+
+    while(Auxiliar){
+        Auxiliar = Eliminar(Auxiliar);
+    }
 }
 
 #pragma endregion

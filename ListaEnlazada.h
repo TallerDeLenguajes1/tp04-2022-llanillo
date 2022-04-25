@@ -9,12 +9,20 @@ typedef struct Objeto{
     char* Palabra;
 }Objeto;
 
-typedef struct Nodo{
+struct Nodo{
     Objeto Objeto;
     struct Nodo* Siguiente;
 };
 typedef struct Nodo* Lista;
 
+Lista CrearLista();
+Lista NuevoNodo(Objeto Dato);
+void InsertarNodo(Lista* Cabecera, Objeto Dato);
+void InsertarAlFinal(Lista* Cabecera, Objeto Dato);
+Lista BuscarNodo(Lista* Cabecera, int ID);
+Lista Eliminar(Lista Nodo);
+void EliminarPorID(Lista* Cabecera, int ID);
+void LiberarMemoria(Lista* Cabecera);
 
 /*
  * Crea una lista vacía
@@ -71,12 +79,17 @@ Lista BuscarNodo(Lista* Cabecera, int ID){
 }
 
 /*
- * Elimina un nodo
+ * Elimina el nodo y devuelve el siguiente de la lista
  */
-void Eliminar(Lista Nodo){
-    if(!Nodo){
-        free(Nodo);
+Lista Eliminar(Lista Nodo){
+    if(Nodo == NULL){
+        return Nodo;
     }
+
+    Lista Temporal = Nodo;
+    Nodo = Nodo->Siguiente;
+    free(Temporal);
+    return Nodo;
 }
 
 /*
@@ -94,6 +107,14 @@ void EliminarPorID(Lista* Cabecera, int ID){
     if(Auxiliar){
         Anterior->Siguiente = Auxiliar->Siguiente;
         free(Auxiliar);
+    }
+}
+
+void LiberarMemoria(Lista* Cabecera){
+    Lista Auxiliar = *Cabecera;
+
+    while(Auxiliar){
+        Auxiliar = Eliminar(Auxiliar);
     }
 }
 
