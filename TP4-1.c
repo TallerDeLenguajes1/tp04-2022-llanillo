@@ -15,12 +15,14 @@ typedef struct Tarea {
     int Duracion;
 } Tarea;
 
-void IngresarTarea(Tarea** Tareas, int Indice);
-void MostrarTareas(Tarea** Tareas, int CantidadTareas);
+Tarea CrearTarea(int Indice);
+void InsertarTarea(Tarea** Tareas, Tarea Objeto, int Indice);
 void RealizarTareas(Tarea** Tareas, Tarea** TareasHechas, int CantidadTareas);
-void BusquedaPorPalabra(Tarea** Tareas, int CantidadTareas, char* PalabraClave);
-void BusquedaPorId(Tarea** Tareas, int CantidadTareas, int ID);
+void BuscarPorPalabra(Tarea** Tareas, int CantidadTareas, char* PalabraClave);
+void BuscarPorID(Tarea** Tareas, int CantidadTareas, int ID);
+void MostrarTareas(Tarea** Tareas, int CantidadTareas);
 void MostrarTarea(Tarea* Tarea);
+void LiberarMemoria(Tarea** Puntero);
 
 int main()
 {
@@ -28,18 +30,18 @@ int main()
     Tarea** Tareas;
     Tarea** TareasHechas;
     
-    srand(time(NULL)); // Línea necesaria para randomizar dígitos
+    srand(time(NULL));
 
     printf("Ingrese la cantidad de tareas\n");
     scanf("%d", &CantidadTareas);
-    getchar(); // IMPORTANTE: Evita que tome el ENTER en las siguientes partes que se pidan más entrada
+    getchar(); // IMPORTANTE: Elimina el ENTER
 
     Tareas = (Tarea**) malloc(CantidadTareas * sizeof(Tarea*));
     TareasHechas = (Tarea**) malloc(CantidadTareas * sizeof(Tarea));
 
     for(unsigned int i = 0; i < CantidadTareas; i++){
-        Tareas[i] = (Tarea*) malloc(sizeof(Tarea)); // Equivalente: (*(Tareas + i)) = (Tarea*) malloc...
-        IngresarTarea(Tareas, i);
+        Tarea Temporal = CrearTarea((int) i);
+        InsertarTarea(Tareas, Temporal, (int) i);
     }
 
     RealizarTareas(Tareas, TareasHechas, CantidadTareas);
@@ -51,18 +53,17 @@ int main()
     MostrarTareas(TareasHechas, CantidadTareas);
 
     printf("\n--------- Tareas Buscadas ---------\n");
-    BusquedaPorPalabra(Tareas, CantidadTareas, "perrito");
-    BusquedaPorId(Tareas, CantidadTareas, 1);
+    BuscarPorPalabra(Tareas, CantidadTareas, "test");
+    BuscarPorID(Tareas, CantidadTareas, 1);
 
     for(unsigned int i = 0; i < CantidadTareas; i++){
+        LiberarMemoria(&(*(Tareas + i)));
+        LiberarMemoria(&(*(TareasHechas + i)));
 //        free((*(Tareas + i))->Descripcion);  NO ES NECESARIO, pues ese espacio de memoria no se creó dinámicamente con malloc
-        free((*(Tareas + i)));
-        (*(Tareas + i))->Descripcion = NULL;
-        (*(Tareas + i)) = NULL;
-//        free((*(TareasHechas + i))->Descripcion);  NO ES NECESARIO, pues ese espacio de memoria no se creó dinámicamente con malloc
-        free((*(TareasHechas + i)));
-        (*(TareasHechas + i))->Descripcion = NULL;
-        (*(TareasHechas + i)) = NULL;
+//        free((*(Tareas + i)));
+//        (*(Tareas + i)) = NULL;
+//        free((*(TareasHechas + i)));
+//        (*(TareasHechas + i)) = NULL;
     }
 
     free(Tareas);
@@ -71,19 +72,32 @@ int main()
     return 0;
 }
 
-void IngresarTarea(Tarea** Tareas, int Indice){
+Tarea CrearTarea(int Indice){
+
+    Tarea Temporal;
+
+    printf("\nIngrese Tarea %d\n", Indice);
     char *Buffer = (char *) malloc(100 * sizeof(char));
 
-    (*(Tareas + Indice))->Duracion = rand() % 101 + 10;
-    (*(Tareas + Indice))->TareaID = Indice;
+    Temporal.Duracion = rand() % 101 + 10;
+    Temporal.TareaID = Indice;
 
     printf("Ingrese la decripcion\n");
     fgets(Buffer, 100, stdin);
 
-    (*(Tareas + Indice))->Descripcion = (char*) malloc((strlen(Buffer) + 1) * sizeof(char));
-    strcpy((*(Tareas + Indice))->Descripcion, Buffer);
+    Temporal.Descripcion = (char*) malloc((strlen(Buffer) + 1) * sizeof(char));
+    strcpy(Temporal.Descripcion, Buffer);
 
-    free(Buffer); // Liberar cualquier memoria alocada dinámicante, incluso en funciones, pues está se guarda en el HEAP
+    free(Buffer);
+    
+    return Temporal;
+}
+
+void InsertarTarea(Tarea** Tareas, Tarea Objeto, int Indice){
+    (*(Tareas + Indice)) = (Tarea*) malloc(sizeof(struct Tarea));
+    (*(Tareas + Indice))->Duracion = Objeto.Duracion;
+    (*(Tareas + Indice))->TareaID = Objeto.TareaID;
+    (*(Tareas + Indice))->Descripcion = Objeto.Descripcion;
 }
 
 void MostrarTareas(Tarea** Tareas, int CantidadTareas){
@@ -128,22 +142,27 @@ void RealizarTareas(Tarea** Tareas, Tarea** TareasHechas, int CantidadTareas){
     }
 }
 
-void BusquedaPorPalabra(Tarea** Tareas, int CantidadTareas, char* PalabraClave){
+void BuscarPorPalabra(Tarea** Tareas, int CantidadTareas, char* PalabraClave){
     
     for(unsigned int i = 0; i < CantidadTareas; i++){
         if((*(Tareas + i)) && strstr((*(Tareas + i))->Descripcion, PalabraClave)){
                 MostrarTarea((*(Tareas + i)));
         }
     }
-
-    return NULL;
 }
 
-void BusquedaPorId(Tarea** Tareas, int CantidadTareas, int ID){
+void BuscarPorID(Tarea** Tareas, int CantidadTareas, int ID){
 
     for(unsigned int i = 0; i < CantidadTareas; i++){
         if((*(Tareas + i)) && (*(Tareas + i))->TareaID == ID){
                 MostrarTarea((*(Tareas + i)));
         }
     }    
+}
+
+void LiberarMemoria(Tarea** Puntero){
+    if(Puntero){
+        free(*Puntero);
+        *Puntero = NULL;
+    }
 }
