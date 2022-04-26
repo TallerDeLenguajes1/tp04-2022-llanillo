@@ -27,7 +27,7 @@ Lista CrearLista();
 Lista NuevoNodo(Tarea Objeto);
 void InsertarNodo(Lista* Cabecera, Tarea Objeto);
 Lista Eliminar(Lista Nodo);
-void LiberarMemoria(Lista* Cabecera);
+void LiberarMemoria(Lista Cabecera);
 
 /*
  * Declaraciones para operar con las tareas
@@ -68,8 +68,8 @@ int main()
     MostrarTarea(BuscarPorPalabra(&Tareas, "test"));
     MostrarTarea(BuscarPorID(&Tareas, 0));
 
-    LiberarMemoria(&Tareas);
-    LiberarMemoria(&TareasHechas);
+    LiberarMemoria(Tareas);
+    LiberarMemoria(TareasHechas);
 
     return 0;
 }
@@ -116,8 +116,8 @@ Lista Eliminar(Lista Nodo){
     return Nodo;
 }
 
-void LiberarMemoria(Lista* Cabecera){
-    Lista Auxiliar = *Cabecera;
+void LiberarMemoria(Lista Cabecera){
+    Lista Auxiliar = Cabecera;
 
     while(Auxiliar){
         Auxiliar = Eliminar(Auxiliar);

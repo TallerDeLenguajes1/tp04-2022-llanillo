@@ -22,7 +22,7 @@ void InsertarAlFinal(Lista* Cabecera, Objeto Dato);
 Lista BuscarNodo(Lista* Cabecera, int ID);
 Lista Eliminar(Lista Nodo);
 void EliminarPorID(Lista* Cabecera, int ID);
-void LiberarMemoria(Lista* Cabecera);
+void LiberarMemoria(Lista Cabecera);
 
 /*
  * Crea una lista vacía
@@ -110,8 +110,8 @@ void EliminarPorID(Lista* Cabecera, int ID){
     }
 }
 
-void LiberarMemoria(Lista* Cabecera){
-    Lista Auxiliar = *Cabecera;
+void LiberarMemoria(Lista Cabecera){
+    Lista Auxiliar = Cabecera;
 
     while(Auxiliar){
         Auxiliar = Eliminar(Auxiliar);
