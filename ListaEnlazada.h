@@ -55,14 +55,16 @@ void InsertarNodo(Lista* Cabecera, Objeto Dato){
  */
 
 void InsertarAlFinal(Lista* Cabecera, Objeto Dato){
-    Lista Nuevo = NuevoNodo(Dato);
-    Lista Auxiliar = *Cabecera;
+    if(*Cabecera){
+        Lista Nuevo = NuevoNodo(Dato);
+        Lista Auxiliar = *Cabecera;
 
-    while(Auxiliar->Siguiente){ // Equivalente a Auxiliar->Siguiente != NULL
-        Auxiliar = Auxiliar->Siguiente;
+        while(Auxiliar->Siguiente){ // Equivalente a Auxiliar->Siguiente != NULL
+            Auxiliar = Auxiliar->Siguiente;
+        }
+
+        Auxiliar->Siguiente = Nuevo;
     }
-
-    Auxiliar->Siguiente = Nuevo;
 }
 
 /*
