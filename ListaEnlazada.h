@@ -1,7 +1,12 @@
-#ifndef TP04_2022_LLANILLO_LISTAENLAZADA_H
-#define TP04_2022_LLANILLO_LISTAENLAZADA_H
-#endif //TP04_2022_LLANILLO_LISTAENLAZADA_H
-
+/*
+*   --- Número rand ---
+*   numero = rand () % 11 + 20;  // Este está entreo 20 y 30
+*   numero = rand () % (N-M+1) + M;   // Este está entre M y N
+*
+*   --- Aritmetica de Punteros --
+*   arr[i][j] == *(arr[i] + j) == *(*(arr + i) + j)
+*   
+*/
 #include <stdlib.h>
 
 typedef struct Objeto{
