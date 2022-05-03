@@ -174,7 +174,8 @@ void MostrarTarea(Lista Tarea){
 void RealizarTareas(Lista* Tareas, Lista* TareasHechas){
 
     Lista Actual = *Tareas;
-    Lista Temporal = NULL;
+    Lista Anterior = *Tareas;
+    int Bandera = 1;
 
     int Opcion;
 
@@ -183,40 +184,30 @@ void RealizarTareas(Lista* Tareas, Lista* TareasHechas){
         printf("¿Esta hecha la tarea? (1 - Si, 0 - No)\n");
         scanf(" %i", &Opcion); // Se agrega espacio al scanf para que elimine el ENTER (Salto de línea)
 
-        /*
-         * Entra si Opcion es diferente de cero
-         */
-        if(Opcion){
+        if(Opcion) {
             // Siempre se agrega a TareasHechas la Tarea actual
             InsertarNodo(TareasHechas, Actual->Objeto);
 
             /*
-             * Entrará solo en la primera iteración, es decir, si se selecciona que está hecha la primera Tarea.
-             * Haremos que la cabecera apunte al siguiente y liberamos la memoria.
+             * Caso Base, mientras se cumpla la bandera, es decir, nos encontramos en la cabecera
+             * vamor a ir moviendola a los siguientes nodos
              */
-            if(Temporal == NULL){
+            if (Bandera) {
                 *Tareas = Actual->Siguiente;
                 Actual = Eliminar(Actual);
             }
             /*
-             * Entrará si es diferente de la primeera iteración, es decir, si se selecciona que está hecha
-             * cualquier Tarea menos la primera.
-             * Haremos que auxiliar y el siguiente del anterior apunten al siguiente del auxiliar, es decir, que apunten
-             * al siguiente nodo de la lista y liberamos la memoria.
+             * Caso cuando los nodos que se quieran mover se encuentren entre elementos, es decir, ya no
+             * estamos en la cabecera
              */
             else{
-                Temporal = Actual;
-                Actual = Actual->Siguiente;
-//                Temporal->Siguiente = Eliminar(Actual);
-                Eliminar(Temporal);
+                Anterior->Siguiente = Eliminar(Actual);
+                Actual = Anterior->Siguiente;
             }
         }
-        /*
-         * Si no se selecciona hecha, seguimos iterando.
-         * Al modificar Temporal, ya no estamos hablando de la primera iteración
-         */
         else{
-            Temporal = Actual;
+            Bandera = 0;
+            Anterior = Actual;
             Actual = Actual->Siguiente;
         }
     }
