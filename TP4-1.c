@@ -173,13 +173,13 @@ void MostrarTarea(Lista Tarea){
 
 void RealizarTareas(Lista* Tareas, Lista* TareasHechas){
 
-    Lista Auxiliar = *Tareas;
-    Lista Anterior = NULL;
+    Lista Actual = *Tareas;
+    Lista Temporal = NULL;
 
     int Opcion;
 
-    while(Auxiliar){
-        printf("--- Tarea %d ---\n", Auxiliar->Objeto.TareaID);
+    while(Actual){
+        printf("--- Tarea %d ---\n", Actual->Objeto.TareaID);
         printf("¿Esta hecha la tarea? (1 - Si, 0 - No)\n");
         scanf(" %i", &Opcion); // Se agrega espacio al scanf para que elimine el ENTER (Salto de línea)
 
@@ -188,35 +188,36 @@ void RealizarTareas(Lista* Tareas, Lista* TareasHechas){
          */
         if(Opcion){
             // Siempre se agrega a TareasHechas la Tarea actual
-            InsertarNodo(TareasHechas,Auxiliar->Objeto);
+            InsertarNodo(TareasHechas, Actual->Objeto);
 
             /*
              * Entrará solo en la primera iteración, es decir, si se selecciona que está hecha la primera Tarea.
              * Haremos que la cabecera apunte al siguiente y liberamos la memoria.
              */
-            if(Anterior == NULL){
-                Lista Temporal = *Tareas;
-                *Tareas = Auxiliar->Siguiente;
-                Auxiliar = Auxiliar->Siguiente;
-                Eliminar(Temporal);
+            if(Temporal == NULL){
+                *Tareas = Actual->Siguiente;
+                Actual = Eliminar(Actual);
             }
             /*
              * Entrará si es diferente de la primeera iteración, es decir, si se selecciona que está hecha
              * cualquier Tarea menos la primera.
-             * Haremos que auxiliar y el siguiente del anterior apunte al siguiente del auxiliar, es decir, que apunten
+             * Haremos que auxiliar y el siguiente del anterior apunten al siguiente del auxiliar, es decir, que apunten
              * al siguiente nodo de la lista y liberamos la memoria.
              */
             else{
-                Auxiliar = Auxiliar->Siguiente;
-                Anterior->Siguiente = Eliminar(Auxiliar);
+                Temporal = Actual;
+                Actual = Actual->Siguiente;
+//                Temporal->Siguiente = Eliminar(Actual);
+                Eliminar(Temporal);
             }
         }
         /*
          * Si no se selecciona hecha, seguimos iterando.
+         * Al modificar Temporal, ya no estamos hablando de la primera iteración
          */
         else{
-            Anterior = Auxiliar;
-            Auxiliar = Auxiliar->Siguiente;
+            Temporal = Actual;
+            Actual = Actual->Siguiente;
         }
     }
 }
